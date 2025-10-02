@@ -1,83 +1,111 @@
-# Pick one question from timed_challenge.txt
-# Paste the question as a comment below
-"""
-14. Navigation System
-Simulate a system that supports moving forward and backward through items.
-Actions: visit("A"), visit("B"), back(), forward()
-Output: "A", "B", "A", "B"
-"""
-# Set a timer for 30 minutes and complete the question!
+# Import the Node class you created in node.py
+from node import Node
 
-
+# Implement your Stack class here
 class Stack:
     def __init__(self):
-        self.items = []
+        self.top = None
 
     def push(self, value):
-        self.items.append(value)
+        new_node = Node(value)
+        new_node.next = self.top
+        self.top = new_node
 
     def pop(self):
-        if not self.items:
+        if self.is_empty():
             return None
-        return self.items.pop()
+        popped_value = self.top.value
+        self.top = self.top.next
+        return popped_value
 
     def peek(self):
-        if not self.items:
+        if self.is_empty():
             return None
-        return self.items[-1]
-
-    def clear(self):
-        self.items = []
+        return self.top.value
+    
+    def print_stack(self):
+        if not self.top:
+            print("Stack is empty")
+            return
+        current = self.top
+        while current:
+            print(current.value)
+            current = current.next
 
     def is_empty(self):
-        return len(self.items) == 0
+        return self.top is None
+
+def run_undo_redo():
+    undo_stack = Stack()
+    redo_stack = Stack()
+    # Create instances of the Stack class for undo and redo
+    
+
+    while True:
+        print("\n--- Undo/Redo Manager ---")
+        print("1. Perform action")
+        print("2. Undo")
+        print("3. Redo")
+        print("4. View Undo Stack")
+        print("5. View Redo Stack")
+        print("6. Exit")
+        choice = input("Select an option: ")
+
+        if choice == "1":
+            action = input("Describe the action (e.g., Insert 'a'): ")
+            undo_stack.push(action)
+            # Push the action onto the undo stack and clear the redo stack
 
 
-class NavigationSystem:
-    def __init__(self):
-        self.back_stack = Stack()
-        self.forward_stack = Stack()
+            print(f"Action performed: {action}")
+        elif choice == "2":
+            if undo_stack.is_empty():
+                print("No actions to undo")
+                continue
+            else:
+                action = undo_stack.pop()
+                redo_stack.push(action)
+            # Pop an action from the undo stack and push it onto the redo stack
+            
 
-    def visit(self, item):
-        self.back_stack.push(item)
-        self.forward_stack.clear()
-        print(f"Visited: {item}")
+        elif choice == "3":
+            if redo_stack.is_empty():
+                print("No actions to redo")
+                continue
+            else:
+                action = redo_stack.pop()
+                undo_stack.push(action)
+            # Pop an action from the redo stack and push it onto the undo stack
 
-    def back(self):
-        if len(self.back_stack.items) < 2:
-            print("No previous item")
-            return None
 
-        current = self.back_stack.pop()
-        self.forward_stack.push(current)
-        previous = self.back_stack.peek()
-        print(f"Back to: {previous}")
-        return previous
+        elif choice == "4":
+            # Print the undo stack
+            print("\nUndo Stack:")
+            undo_stack.print_stack()
 
-    def forward(self):
-        if self.forward_stack.is_empty():
-            print("No next item")
-            return None
-        next_item = self.forward_stack.pop()
-        self.back_stack.push(next_item)
-        print(f"Forward to: {next_item}")
-        return next_item
+            
+            
 
-NavigationSystem = NavigationSystem()
+        elif choice == "5":
+            # Print the redo stack
+            print("\nRedo Stack:")
+            redo_stack.print_stack()
+            
+            
+            
+        elif choice == "6":
+            print("Exiting Undo/Redo Manager.")
+            break
+        else:
+            print("Invalid option.")
 
-NavigationSystem.visit("A")
-NavigationSystem.visit("B")
-NavigationSystem.back() 
-NavigationSystem.forward()  
+if __name__ == "__main__":
+    run_undo_redo()
 
-NavigationSystem.back()  
-NavigationSystem.back()  
-NavigationSystem.forward()  
-NavigationSystem.forward()  
 
-#What structure you chose and why
-#the structure i chose was stack because it follows the LIFO principle which is perfect for this problem, however i needed two stacks to handle both back and forward navigation. which means, that when we go back, we push the current item onto the forward stack, and when we go forward, we pop from the forward stack and push it back onto the back stack.
-#How the time limit shaped your decision
-#the time limit made me choose a better and more organized version, because at the beggining i wanted to do one stack and use a pointer to track the current position, but that would have made the code more complex and harder to manage within the time limit. so i changed my mind and did a code that is more simple and better in terms of usage
-#What trade-offs or compromises you made under time pressure
-#the trade off i made was to not implement error handling for invalid inputs or edge cases, because i wanted to focus on the main functionality of the navigation system within the time limit. so i focus more on the code to ensure it works that on handling cases that break the code, if id focus on both i wouldnot make it on time.
+    #Why is a stack the right choice for undo/redo?
+    #A stack is the right choice for undo/redo because it follows the Last In, First Out (LIFO) principle. This means that the most recent action performed is the first one to be undone, which is perfect for how the users expect to undo functionality to work. When an action is undone, it can be pushed onto a redo stack, allowing users to redo actions in the reverse order they were undone.
+#Why is a queue better suited for the help desk?
+    #A queue is better suited for the help desk because it follows the First In, First Out (FIFO) principle. This means that customers are helped in the order they arrive. The first customer to enter the queue is the first one to be served, which is the normal situations when customer services are helping clients.
+#How do your implementations differ from Python’s built-in lists?
+    #My implementations differ from pythons built-in lists because they are specifically designed to funcion as stacks and queues, also they have methods of data structures ( like push, pop for stacs and enqueue,dequeue for queues). built-in lists in pyhton are more general and not such an especific purpose and our data structures are fare mor efficient. also with the implementation of th eLIFO AND FIFO principles and linked nodes, the system is more memory efficient and time efficient
